@@ -8,6 +8,7 @@ package com.task1;
 public class PrefixMatches {
     private Trie trie;
 
+    //TODO
     public int add(String... strings) {
         return 0;
     }
@@ -17,18 +18,19 @@ public class PrefixMatches {
     }
 
     public boolean delete(String word) {
-        return false;
+        return trie.delete(word);
     }
 
     public int size() {
-        return 0;
+        return trie.size();
     }
 
+    //TODO
     public Iterable<String> wordsWithPrefix(String pref, int k) {
         return null;
     }
 
     public Iterable<String> wordsWithPrefix(String pref) {
-        return null;
+        return trie.wordsWithPrefix(pref);
     }
 }

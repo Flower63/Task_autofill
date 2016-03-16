@@ -13,24 +13,37 @@ public class RWayTrie implements Trie {
 	private final Node root = new Node(' ');
 
 	public void add(Tuple tuple) {
-    	//String word = tuple.getTerm();
+    	String word = tuple.getTerm();
     	char[] letters = tuple.getTerm().toCharArray();
     	Node node = root;
     	
-    	for (char ch : letters) {
-    		for(int i = 0; i < node.next.length; i++) {
+    	for (int i = 0; i < letters.length; i++) {
+    		
+    		char ch = letters[i];
+    		
+    		for(int j = 0; j < node.next.length; j++) {
     			Node n = node.next[i];
     			
     			//Out of nodes
     			if (n == null) {
-    				node.next[i] = new Node(ch);
-    				node = node.next[i];
+    				node.next[j] = new Node(ch);
+    				node = node.next[j];
+    				
+    				if (i == word.length() - 1) {
+    					node.value = tuple.getWeight();
+    				}
+    				
     				break;
     			}
     			
     			//Such node exists
     			if (n.key == ch) {
     				node = n;
+    				
+    				if (i == word.length() - 1) {
+    					node.value = tuple.getWeight();
+    				}
+    				
     				break;
     			}
     		}
