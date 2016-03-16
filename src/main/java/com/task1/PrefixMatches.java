@@ -1,3 +1,5 @@
+package com.task1;
+
 /**
  * Created by Dennis
  *
@@ -11,7 +13,7 @@ public class PrefixMatches {
     }
 
     public boolean contains(String word) {
-        return false;
+        return trie.contains(word);
     }
 
     public boolean delete(String word) {
