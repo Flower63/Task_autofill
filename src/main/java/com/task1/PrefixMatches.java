@@ -6,11 +6,43 @@ package com.task1;
  * on 3/15/2016.
  */
 public class PrefixMatches {
+	private static final String SPACE_LITERAL = " ";
+	private static final int LENGTH_THRESHOLD = 2;
+	
     private Trie trie;
 
-    //TODO
-    public int add(String... strings) {
-        return 0;
+    public PrefixMatches(Trie trie) {
+		this.trie = trie;
+	}
+    
+    public PrefixMatches() {}
+
+	public int add(String... strings) {
+    	
+    	int counter = 0;
+    	
+    	if(strings == null) {
+    		return 0;
+    	}
+    	
+    	for (String s : strings) {
+    		
+    		if (s == null) { continue; }
+    		
+    		if (s.contains(SPACE_LITERAL)) {
+    			for (String str : s.split(SPACE_LITERAL)) {
+    				if (str.length() > LENGTH_THRESHOLD) {
+    					trie.add(new Tuple(str));
+    					counter++;
+    				}
+    			}
+    		} else if (s.length() > LENGTH_THRESHOLD) {
+    			trie.add(new Tuple(s));
+				counter++;
+    		}
+    	}
+    	
+        return counter;
     }
 
     public boolean contains(String word) {

@@ -143,7 +143,6 @@ public class RWayTrie implements Trie {
 
 	private class PrefixContainer {
 		private String prefix;
-		private ArrayList<Node> nodes = new ArrayList<>();
 		private Node node;
 
 		public PrefixContainer(String prefix, Node node) {

@@ -2,38 +2,56 @@ package com.task1;
 
 import static org.junit.Assert.*;
 
+import org.junit.Before;
 import org.junit.Test;
 
 public class PrefixMatchesTest {
+	private PrefixMatches obj;
+	private String[] words;
+	
+	@Before
+	public void init() {
+		obj = new PrefixMatches(new RWayTrie());
+		
+		words = new String[] {"one", "two", "to", "i", "anakonda"};
+		
+		obj.add(words);
+	}
 
 	@Test
 	public void testAdd() {
-		fail("Not yet implemented");
+		assertTrue(obj.add(words) == 3);
+		
+		assertTrue(obj.add(null) == 0);
 	}
 
 	@Test
 	public void testContains() {
-		fail("Not yet implemented");
+		assertTrue(obj.contains("one"));
+		assertTrue(obj.contains("two"));
+		assertTrue(obj.contains("anakonda"));
+		assertFalse(obj.contains("to"));
+		assertFalse(obj.contains("another"));
 	}
 
 	@Test
 	public void testDelete() {
-		fail("Not yet implemented");
+		
 	}
 
 	@Test
 	public void testSize() {
-		fail("Not yet implemented");
+		
 	}
 
 	@Test
 	public void testWordsWithPrefixStringInt() {
-		fail("Not yet implemented");
+		
 	}
 
 	@Test
 	public void testWordsWithPrefixString() {
-		fail("Not yet implemented");
+		
 	}
 
 }
