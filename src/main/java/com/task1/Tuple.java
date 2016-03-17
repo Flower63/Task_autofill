@@ -9,7 +9,6 @@ public class Tuple {
     private int weight;
     
 	public Tuple(String term) {
-		super();
 		this.term = term;
 		this.weight = term.length();
 	}

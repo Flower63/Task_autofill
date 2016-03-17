@@ -31,6 +31,6 @@ public class PrefixMatches {
     }
 
     public Iterable<String> wordsWithPrefix(String pref) {
-        return trie.wordsWithPrefix(pref);
+        return wordsWithPrefix(pref, 3);
     }
 }
