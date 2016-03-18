@@ -2,6 +2,9 @@ package com.task1;
 
 import org.junit.Test;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 /**
@@ -74,19 +77,40 @@ public class RWayTrieTest {
 
     @Test
     public void testWordsWithPrefix() throws Exception {
+        String prefix = "abc";
         Trie trie = new RWayTrie();
+        List<String> content = new LinkedList<>();
 
-        trie.add(new Tuple("abc"));
+        //Must contain itself
+        trie.add(new Tuple(prefix));
+        content.add(prefix);
+
+        //Doesn't match, should'n be in
         trie.add(new Tuple("abf"));
+
+        //Match
         trie.add(new Tuple("abcde"));
+        content.add("abcde");
+
+        //Match
         trie.add(new Tuple("abcxxxx"));
+        content.add("abcxxxx");
+
+        //Doesn't match
         trie.add(new Tuple("adcf"));
         trie.add(new Tuple("group"));
         trie.add(new Tuple("the"));
 
-        for (String s : trie.wordsWithPrefix("abc")) {
-            System.out.println(s);
+        Iterable<String> iter = trie.wordsWithPrefix(prefix);
+
+        int counter = 0;
+
+        for (String s : iter) {
+            assertTrue(content.contains(s));
+            counter++;
         }
+
+        assertEquals(content.size(), counter);
     }
 
     @Test
