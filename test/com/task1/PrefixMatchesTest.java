@@ -8,6 +8,7 @@ import org.junit.Test;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.Iterator;
 
 public class PrefixMatchesTest {
 	private PrefixMatches obj;
@@ -31,12 +32,14 @@ public class PrefixMatchesTest {
 
 	@Test
 	public void testContains() {
-		assertTrue(obj.contains("one"));
-		assertTrue(obj.contains("two"));
-		assertTrue(obj.contains("anakonda"));
-		assertTrue(obj.contains("string"));
-		assertTrue(obj.contains("with"));
-		assertTrue(obj.contains("spaces"));
+		String[] strings = {"one", "two", "anakonda", "string",
+							"with", "spaces"};
+		
+		
+		for(String s : strings) {
+			assertTrue(obj.contains(s));
+		}
+		
 		assertFalse(obj.contains("to"));
 		assertFalse(obj.contains("another"));
 	}
@@ -44,6 +47,17 @@ public class PrefixMatchesTest {
 	@Test
 	public void testDelete() {
 		
+		assertEquals(6, obj.size());
+		
+		assertTrue(obj.delete("one"));
+		
+		assertEquals(5, obj.size());
+		
+		assertFalse(obj.contains("one"));
+		
+		assertFalse(obj.delete("one"));
+		
+		assertFalse(obj.delete("another"));
 	}
 
 	@Test
@@ -51,14 +65,25 @@ public class PrefixMatchesTest {
 		assertEquals(6, obj.size());
 	}
 
+	//TODO
 	@Test
 	public void testWordsWithPrefixStringInt() {
+		PrefixMatches testObj = new PrefixMatches();
 		
+		testObj.add("abc", "abcd", "abce", "abcf", "abcda", "abcxxx");
+		
+		//ArrayList<String> result = 
 	}
 
 	@Test
 	public void testWordsWithPrefixString() {
+		Iterable<String> result = obj.wordsWithPrefix("on");
 		
+		Iterator<String> iterator = result.iterator();
+		
+		assertTrue(iterator.hasNext());
+		
+		assertEquals("one", iterator.next());
 	}
 
 	@Test
