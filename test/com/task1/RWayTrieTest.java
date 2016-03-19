@@ -2,6 +2,8 @@ package com.task1;
 
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -31,11 +33,6 @@ public class RWayTrieTest {
     }
 
     @Test
-    public void testContains() throws Exception {
-
-    }
-
-    @Test
     public void testDelete() throws Exception {
         Trie trie = new RWayTrie();
 
@@ -54,25 +51,19 @@ public class RWayTrieTest {
     @Test
     public void testWords() throws Exception {
         Trie trie = new RWayTrie();
+        List<String> content = Arrays.asList("abc", "def", "link", "privacy", "group", "the");
 
-        trie.add(new Tuple("abc"));
-        trie.add(new Tuple("def"));
-        trie.add(new Tuple("link"));
-        trie.add(new Tuple("privacy"));
-        trie.add(new Tuple("group"));
-        trie.add(new Tuple("the"));
-
-        for (String s : trie.words()) {
-            System.out.println(s);
+        for (String s : content) {
+            trie.add(new Tuple(s));
         }
 
-        System.out.println();
+        for (String s : trie.words()) {
+            assertTrue(content.contains(s));
+        }
 
         trie.delete("abc");
 
-        for (String s : trie.words()) {
-            System.out.println(s);
-        }
+        assertFalse(trie.contains("abc"));
     }
 
     @Test
@@ -111,10 +102,5 @@ public class RWayTrieTest {
         }
 
         assertEquals(content.size(), counter);
-    }
-
-    @Test
-    public void testSize() throws Exception {
-
     }
 }
