@@ -119,7 +119,7 @@ public class RWayTrie implements Trie {
 	 * @return All words
      */
     public Iterable<String> words() {
-        return findWords(root);
+        return findWords(root, "");
     }
 
 	/**
@@ -135,54 +135,73 @@ public class RWayTrie implements Trie {
 
 		Node node = findNode(prefix);
 
-		List<String> words = (List<String>) findWords(node);
-
-		if (contains(prefix)) {
-			words.add(0, "");
-		}
-
-		for (int i = 0; i < words.size(); i++) {
-			words.set(i, prefix + words.get(i));
-		}
-
-        return words;
+		return findWords(node, prefix);
     }
 
+    //TODO lazy iterator
 	/*
 	 * Method to find words in subtree of specified node
 	 */
-	private Iterable<String> findWords(Node node) {
-
-		List<String> words = new ArrayList<>();
-
+	private Iterable<String> findWords(Node node, String prefix) {
 		if (node == null) {
-			return words;
+			return Collections.EMPTY_LIST;
 		}
-
-		Queue<PrefixContainer> containers = new LinkedList<>();
-
+		
+		final Queue<PrefixContainer> containers = new LinkedList<>();
+		
 		containers.offer(new PrefixContainer("", node));
 
-		while (!containers.isEmpty()) {
-			PrefixContainer container = containers.poll();
-			String prefix = container.prefix;
-
-			for (int i = 0; i < NODE_CAPACITY; i++) {
-				Node n = container.node.next[i];
-
-				if (n != null) {
-					String pref = prefix + ((char) (i + UNICODE_SHIFT));
-
-					containers.offer(new PrefixContainer(pref, n));
-
-					if (n.value != 0) {
-						words.add(pref);
+		return new Iterable<String>() {
+			@Override
+			public Iterator<String> iterator() {
+				return new Iterator<String>() {
+					@Override
+					public boolean hasNext() {
+						return false;
 					}
-				}
-			}
-		}
 
-		return words;
+					@Override
+					public String next() {
+						return null;
+					}
+					
+				};
+			}
+			
+		};
+		
+//		private Iterable<String> findWords(Node node) {
+//
+//			List<String> words = new ArrayList<>();
+//
+//			if (node == null) {
+//				return words;
+//			}
+//
+//			Queue<PrefixContainer> containers = new LinkedList<>();
+//
+//			containers.offer(new PrefixContainer("", node));
+//
+//			while (!containers.isEmpty()) {
+//				PrefixContainer container = containers.poll();
+//				String prefix = container.prefix;
+//
+//				for (int i = 0; i < NODE_CAPACITY; i++) {
+//					Node n = container.node.next[i];
+//
+//					if (n != null) {
+//						String pref = prefix + ((char) (i + UNICODE_SHIFT));
+//
+//						containers.offer(new PrefixContainer(pref, n));
+//
+//						if (n.value != 0) {
+//							words.add(pref);
+//						}
+//					}
+//				}
+//			}
+//
+//			return words;
 	}
 
 	/**
@@ -197,7 +216,7 @@ public class RWayTrie implements Trie {
     /*
      * Node representation
      */
-    private class Node {
+    private static class Node {
     	private int value;
     	private Node[] next = new Node[NODE_CAPACITY];
     }
@@ -205,7 +224,7 @@ public class RWayTrie implements Trie {
 	/*
 	 * Container class to hold Node and Prefix
 	 */
-	private class PrefixContainer {
+	private static class PrefixContainer {
 		private String prefix;
 		private Node node;
 
