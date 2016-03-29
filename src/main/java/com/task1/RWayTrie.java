@@ -145,7 +145,6 @@ public class RWayTrie implements Trie {
 		return findWords(node, prefix);
     }
 
-    //TODO lazy iterator
 	/*
 	 * Method to find words in subtree of specified node
 	 */
@@ -225,15 +224,14 @@ public class RWayTrie implements Trie {
 		}
 	}
 
+	/*
+	 * Iterator to iterate over trie content
+	 */
 	private class TrieIterator implements Iterator<String> {
-		private Node node;
-		private final String prefix;
 		private final int consistency;
 		private final Queue<PrefixContainer> containers = new LinkedList<>();
 
 		public TrieIterator(Node node, String prefix) {
-			this.node = node;
-			this.prefix = prefix;
 			this.consistency = consistencyCount;
 
 			containers.offer(new PrefixContainer(prefix, node));
@@ -270,9 +268,13 @@ public class RWayTrie implements Trie {
 				}
 			}
 
-			return null;
+			// if on elements left, but user still calls next()
+			throw new NoSuchElementException();
 		}
 
+		/*
+		 * Check the consistency of trie
+		 */
 		private void checkConsistency() {
 			if (consistency != consistencyCount) {
 				throw new ConcurrentModificationException();

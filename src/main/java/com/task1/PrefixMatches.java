@@ -157,4 +157,38 @@ public class PrefixMatches {
     public Iterable<String> wordsWithPrefix(String pref) {
         return wordsWithPrefix(pref, 3);
     }
+    
+    //TODO
+    private class PrefixIterator implements Iterator<String> {
+    	private boolean available;
+    	private final Iterator<String> trieIterator;
+    	private String cache;
+    	private final int wordsLength;
+    	private int length;
+    	private int timesChanged;
+    	
+		public PrefixIterator(String prefix, int wordsLength) {
+			this.trieIterator = trie.wordsWithPrefix(prefix).iterator();
+			this.wordsLength = wordsLength;
+			
+			if (trieIterator.hasNext()) {
+				available = true;
+				cache = trieIterator.next();
+				length = cache.length();
+			}
+		}
+
+		@Override
+		public boolean hasNext() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public String next() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+    	
+    }
 }

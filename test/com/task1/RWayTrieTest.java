@@ -3,7 +3,6 @@ package com.task1;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -76,7 +75,7 @@ public class RWayTrieTest {
         trie.add(new Tuple(prefix));
         content.add(prefix);
 
-        //Doesn't match, should'n be in
+        //Doesn't match, shouldn't be in
         trie.add(new Tuple("abf"));
 
         //Match
