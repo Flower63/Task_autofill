@@ -23,6 +23,11 @@ public class RWayTrie implements Trie {
 	private int size;
 
 	/*
+	 * Variable to ensure data consistency
+	 */
+	private volatile int consistencyCount;
+
+	/*
 	 * Root node
 	 */
 	private final Node root = new Node();
@@ -54,6 +59,7 @@ public class RWayTrie implements Trie {
 		node.value = tuple.getWeight();
     	
     	size++;
+		consistencyCount++;
     }
 
 	/*
@@ -107,6 +113,7 @@ public class RWayTrie implements Trie {
 		if (node != null && node.value != 0) {
 			node.value = 0;
 			size--;
+			consistencyCount++;
 			return true;
 		}
 
@@ -146,28 +153,12 @@ public class RWayTrie implements Trie {
 		if (node == null) {
 			return Collections.EMPTY_LIST;
 		}
-		
-		final Queue<PrefixContainer> containers = new LinkedList<>();
-		
-		containers.offer(new PrefixContainer("", node));
 
 		return new Iterable<String>() {
 			@Override
 			public Iterator<String> iterator() {
-				return new Iterator<String>() {
-					@Override
-					public boolean hasNext() {
-						return false;
-					}
-
-					@Override
-					public String next() {
-						return null;
-					}
-					
-				};
+				return new TrieIterator(node, prefix);
 			}
-			
 		};
 		
 //		private Iterable<String> findWords(Node node) {
@@ -231,6 +222,61 @@ public class RWayTrie implements Trie {
 		public PrefixContainer(String prefix, Node node) {
 			this.prefix = prefix;
 			this.node = node;
+		}
+	}
+
+	private class TrieIterator implements Iterator<String> {
+		private Node node;
+		private final String prefix;
+		private final int consistency;
+		private final Queue<PrefixContainer> containers = new LinkedList<>();
+
+		public TrieIterator(Node node, String prefix) {
+			this.node = node;
+			this.prefix = prefix;
+			this.consistency = consistencyCount;
+
+			containers.offer(new PrefixContainer(prefix, node));
+		}
+
+		@Override
+		public boolean hasNext() {
+			checkConsistency();
+
+			return !containers.isEmpty();
+		}
+
+		@Override
+		public String next() {
+			checkConsistency();
+
+			while (!containers.isEmpty()) {
+				PrefixContainer container = containers.poll();
+				String word = container.prefix;
+				Node tempNode = container.node;
+
+				for (int i = 0; i < NODE_CAPACITY; i++) {
+					Node n = tempNode.next[i];
+
+					if (n != null) {
+						String pref = word + ((char) (i + UNICODE_SHIFT));
+
+						containers.offer(new PrefixContainer(pref, n));
+					}
+				}
+
+				if (tempNode.value != 0) {
+					return word;
+				}
+			}
+
+			return null;
+		}
+
+		private void checkConsistency() {
+			if (consistency != consistencyCount) {
+				throw new ConcurrentModificationException();
+			}
 		}
 	}
 }
