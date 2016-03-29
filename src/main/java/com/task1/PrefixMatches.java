@@ -14,8 +14,9 @@ public class PrefixMatches {
 	/*
 	 * Constants
 	 */
-	private static final String SPACE_LITERAL = " ";
-	private static final int LENGTH_THRESHOLD = 2;
+	private final static String SPACE_LITERAL = " ";
+	private final static int LENGTH_THRESHOLD = 2;
+	private final static int DEFAULT_SEARCH_LENGTH = 3;
 
 	/*
 	 * Trie instance
@@ -41,8 +42,9 @@ public class PrefixMatches {
 	/**
 	 * Creates in-memory dictionary.
 	 *
-	 * @param strings Input strings. May be words, or couple of words,
-	 *                   white-space separated
+	 * @param strings Input strings. May be words, 
+	 * or couple of words,
+	 * white-space separated
 	 *
 	 * @return Amount of accepted word
      */
@@ -50,7 +52,7 @@ public class PrefixMatches {
     	
     	int counter = 0;
     	
-    	if(strings == null) {
+    	if (strings == null) {
     		return 0;
     	}
     	
@@ -104,9 +106,11 @@ public class PrefixMatches {
     }
 
 	/**
-	 * List of words with specified prefix, limited by number of length sets.
+	 * List of words with specified prefix, limited 
+	 * by number of length sets.
 	 *
-	 * 3 returns words of 3 different lengths, 4 - of 4 different lengths, and so on
+	 * 3 returns words of 3 different lengths, 4 - 
+	 * of 4 different lengths, and so on
 	 *
 	 * @param pref Prefix
 	 * @param k Amount of lengths
@@ -114,38 +118,46 @@ public class PrefixMatches {
      */
     public Iterable<String> wordsWithPrefix(String pref, int k) {
 
-		if (pref == null || k == 0) {
-			return Collections.emptyList();
-		}
-
-		List<String> result = new ArrayList<>();
-		Iterable<String> source = trie.wordsWithPrefix(pref);
-		int wordLength = 0;
-
-		Iterator<String> iterator = source.iterator();
-
-		if (iterator.hasNext()) {
-			String init = iterator.next();
-			wordLength = init.length();
-			result.add(init);
-		}
-
-		while (iterator.hasNext()) {
-			String word = iterator.next();
-
-			if (word.length() != wordLength) {
-				k--;
-				wordLength = word.length();
+//		if (pref == null || k == 0) {
+//			return Collections.emptyList();
+//		}
+//
+//		List<String> result = new ArrayList<>();
+//		Iterable<String> source = trie.wordsWithPrefix(pref);
+//		int wordLength = 0;
+//
+//		Iterator<String> iterator = source.iterator();
+//
+//		if (iterator.hasNext()) {
+//			String init = iterator.next();
+//			wordLength = init.length();
+//			result.add(init);
+//		}
+//
+//		while (iterator.hasNext()) {
+//			String word = iterator.next();
+//
+//			if (word.length() != wordLength) {
+//				k--;
+//				wordLength = word.length();
+//			}
+//
+//			if (k == 0) {
+//				break;
+//			}
+//
+//			result.add(word);
+//		}
+//
+//		return result;
+    	
+    	return new Iterable<String>() {
+			@Override
+			public Iterator<String> iterator() {
+				return new PrefixIterator(pref, k);
 			}
-
-			if (k == 0) {
-				break;
-			}
-
-			result.add(word);
-		}
-
-		return result;
+    		
+    	};
     }
 
 	/**
@@ -155,10 +167,9 @@ public class PrefixMatches {
 	 * @return List of words within given restrictions
      */
     public Iterable<String> wordsWithPrefix(String pref) {
-        return wordsWithPrefix(pref, 3);
+        return wordsWithPrefix(pref, DEFAULT_SEARCH_LENGTH);
     }
     
-    //TODO
     private class PrefixIterator implements Iterator<String> {
     	private boolean available;
     	private final Iterator<String> trieIterator;
@@ -180,15 +191,33 @@ public class PrefixMatches {
 
 		@Override
 		public boolean hasNext() {
-			// TODO Auto-generated method stub
-			return false;
+			return available;
 		}
 
 		@Override
 		public String next() {
-			// TODO Auto-generated method stub
-			return null;
+			if (!available) {
+				throw new NoSuchElementException();
+			}
+			
+			String word = cache;
+			
+			if (!trieIterator.hasNext()) {
+				available = false;
+			} else {
+				cache = trieIterator.next();
+				
+				if (cache.length() != length) {
+					length = cache.length();
+					timesChanged++;
+				}
+			}
+			
+			if (timesChanged == wordsLength) {
+				available = false;
+			}
+			
+			return word;
 		}
-    	
     }
 }
